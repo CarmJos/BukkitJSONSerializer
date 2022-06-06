@@ -1,7 +1,7 @@
 # BukkitJSONSerializer
 
 [![version](https://img.shields.io/github/v/release/CarmJos/BukkitJSONSerializer)](https://github.com/CarmJos/BukkitJSONSerializer/releases)
-[![License](https://img.shields.io/github/license/CarmJos/BukkitJSONSerializer)](https://opensource.org/licenses/MIT)
+[![License](https://img.shields.io/github/license/CarmJos/BukkitJSONSerializer)](https://www.gnu.org/licenses/lgpl-3.0.html)
 [![workflow](https://github.com/CarmJos/BukkitJSONSerializer/actions/workflows/maven.yml/badge.svg?branch=master)](https://github.com/CarmJos/BukkitJSONSerializer/actions/workflows/maven.yml)
 [![CodeFactor](https://www.codefactor.io/repository/github/carmjos/BukkitJSONSerializer/badge)](https://www.codefactor.io/repository/github/carmjos/BukkitJSONSerializer)
 ![CodeSize](https://img.shields.io/github/languages/code-size/CarmJos/BukkitJSONSerializer)
