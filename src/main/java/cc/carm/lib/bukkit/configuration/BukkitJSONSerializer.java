@@ -16,8 +16,10 @@ import java.util.Optional;
 
 /**
  * BukkitJSONSerializer, a lightweight JSON serializer for {@link ConfigurationSerializable} objects.
- * <li>serialize by {@link #serializeToJSON(ConfigurationSerializable)}</li>
- * <li>deserialize by {@link #deserializeJSON(String, Class, ConfigurationSerializable)}</li>
+ * <ul>
+ *   <li>serialize by {@link #serializeToJSON(ConfigurationSerializable)}</li>
+ *   <li>deserialize by {@link #deserializeJSON(String, Class, ConfigurationSerializable)}</li>
+ * </ul>
  *
  * @author CarmJos
  * @since 1.0.0
