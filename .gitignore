@@ -1,0 +1,8 @@
+/.idea/
+/target/
+**/target/
+./*.iml
+*.iml
+**.iml
+
+asset/
