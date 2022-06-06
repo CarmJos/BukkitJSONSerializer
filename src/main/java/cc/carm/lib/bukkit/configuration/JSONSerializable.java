@@ -11,7 +11,7 @@ public interface JSONSerializable extends ConfigurationSerializable {
      * @return JSON string contains serialized data.
      */
     default @NotNull String serializeToJSON() {
-        return BukkitJSONSerializer.serializeToJSON(this);
+        return BukkitJSONSerializer.get().serializeToJSON(this);
     }
 
 }

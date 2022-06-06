@@ -10,13 +10,15 @@ import java.util.UUID;
 public class demo {
 
     public static void demoUsage() {
+        BukkitJSONSerializer serializer = BukkitJSONSerializer.create();
 
         Location location = new Location(Bukkit.getWorlds().get(0), -100.5, 100, 105.5);
 
-        String serialized = BukkitJSONSerializer.serializeToJSON(location);
+        String serialized = serializer.serializeToJSON(location);
         // serialized -> {"world":"world","x":-100.5,"y":100,"z":105.5,"yaw":0.0,"pitch":0.0}
 
-        Location deserialized = BukkitJSONSerializer.deserializeJSON(serialized, Location.class);
+        Location deserialized = serializer.deserializeJSON(serialized, Location.class);
+        // deserialized -> Location{world=world, x=-100.5, y=100, z=105.5, pitch=0.0, yaw=0.0}
 
     }
 

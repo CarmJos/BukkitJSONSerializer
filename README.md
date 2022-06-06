@@ -13,7 +13,13 @@ A JSON serialize/deserialize util for bukkit's ConfigurationSerialization.
 
 ### Basic usage
 
-We cloud use `BukkitJSONSerializer#serializeToJSON(ConfigurationSerializable)` to serialize a object to JSON.
+First, we should get the serializer instance or create a new one.
+
+```java
+   BukkitJSONSerializer serializer=BukkitJSONSerializer.get();
+```
+
+Then, we cloud use `BukkitJSONSerializer#serializeToJSON(ConfigurationSerializable)` to serialize a object to JSON.
 
 ```jave
         Location location = new Location(Bukkit.getWorlds().get(0), -100.5, 100, 105.5);
@@ -25,12 +31,14 @@ When we need to read the object, just use `BukkitJSONSerializer#deserializeSON(j
 string.
 
 ```java
-        Location deserialized=BukkitJSONSerializer.deserializeJSON(serialized,Location.class);
+        Location location = serializer.deserializeSON(json, Location.class);
+        // deserialized -> Location{world=world, x=-100.5, y=100, z=105.5, pitch=0.0, yaw=0.0}
 ```
 
 Or use `BukkitJSONSerializer#deserializeSON(json,typeClass,defaultValue)` if we need a default value.
 
 ### JSONSerializable class
+
 This project provided an interface `JSONSerializable` which provided a default method to serialize itself to JSON.
 
 ```java

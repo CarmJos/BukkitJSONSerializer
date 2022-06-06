@@ -26,17 +26,27 @@ import java.util.Optional;
  */
 public class BukkitJSONSerializer {
 
-    protected static final String TYPE_KEY = ConfigurationSerialization.SERIALIZED_TYPE_KEY;
+    public static final String TYPE_KEY = ConfigurationSerialization.SERIALIZED_TYPE_KEY;
+    public static final BukkitJSONSerializer INSTANCE = BukkitJSONSerializer.create();
 
-    protected static Gson gson = new GsonBuilder().disableHtmlEscaping().create();
-    protected static JsonParser parser = new JsonParser();
-
-    public static void setGson(Gson gson) {
-        BukkitJSONSerializer.gson = gson;
+    public static @NotNull BukkitJSONSerializer create() {
+        return create(new GsonBuilder().disableHtmlEscaping().create(), new JsonParser());
     }
 
-    public static void setParser(JsonParser parser) {
-        BukkitJSONSerializer.parser = parser;
+    public static @NotNull BukkitJSONSerializer create(@NotNull Gson gson, @NotNull JsonParser parser) {
+        return new BukkitJSONSerializer(gson, parser);
+    }
+
+    public static @NotNull BukkitJSONSerializer get() {
+        return BukkitJSONSerializer.INSTANCE;
+    }
+
+    protected final @NotNull Gson gson;
+    protected final @NotNull JsonParser parser;
+
+    public BukkitJSONSerializer(@NotNull Gson gson, @NotNull JsonParser parser) {
+        this.gson = gson;
+        this.parser = parser;
     }
 
     /**
@@ -46,7 +56,7 @@ public class BukkitJSONSerializer {
      * @param <T>   {@link ConfigurationSerializable} object type.
      * @return Map containing serialized data
      */
-    public static <T extends ConfigurationSerializable> Map<String, Object> serializeToMap(T value) {
+    public <T extends ConfigurationSerializable> Map<String, Object> serializeToMap(T value) {
         Map<String, Object> values = new LinkedHashMap<>();
         // First, put tye type key;
         values.put(TYPE_KEY, ConfigurationSerialization.getAlias(value.getClass()));
@@ -68,7 +78,7 @@ public class BukkitJSONSerializer {
      * @param <T>   {@link ConfigurationSerializable} object type.
      * @return JSON string containing serialized data.
      */
-    public static <T extends ConfigurationSerializable> String serializeToJSON(T value) {
+    public <T extends ConfigurationSerializable> String serializeToJSON(T value) {
         return gson.toJson(serializeToMap(value));
     }
 
@@ -79,7 +89,7 @@ public class BukkitJSONSerializer {
      * @return Deserialized object.
      */
     @Contract("null->null")
-    public static Object deserializeJSON(@Nullable String json) {
+    public Object deserializeJSON(@Nullable String json) {
         return deserializeJSON(json, (ConfigurationSerializable) null);
     }
 
@@ -91,8 +101,8 @@ public class BukkitJSONSerializer {
      * @return Deserialized object.
      */
     @Contract("_,!null->!null; null,null->null")
-    public static ConfigurationSerializable deserializeJSON(@Nullable String json,
-                                                            @Nullable ConfigurationSerializable defaultValue) {
+    public ConfigurationSerializable deserializeJSON(@Nullable String json,
+                                                     @Nullable ConfigurationSerializable defaultValue) {
         if (json == null) return defaultValue;
         Map<String, Object> args = jsonToMap(json);
 
@@ -110,8 +120,8 @@ public class BukkitJSONSerializer {
      * @param <T>       {@link ConfigurationSerializable} object type.
      * @return Deserialized object.
      */
-    public static <T extends ConfigurationSerializable> @Nullable T deserializeJSON(@Nullable String json,
-                                                                                    @NotNull Class<T> typeClazz) {
+    public <T extends ConfigurationSerializable> @Nullable T deserializeJSON(@Nullable String json,
+                                                                             @NotNull Class<T> typeClazz) {
         return deserializeJSON(json, typeClazz, null);
     }
 
@@ -125,24 +135,24 @@ public class BukkitJSONSerializer {
      * @return Deserialized object.
      */
     @Contract("_,_,!null->!null; null,_,null->null")
-    public static <T extends ConfigurationSerializable> T deserializeJSON(@Nullable String json,
-                                                                          @NotNull Class<T> typeClazz,
-                                                                          @Nullable T defaultValue) {
+    public <T extends ConfigurationSerializable> T deserializeJSON(@Nullable String json,
+                                                                   @NotNull Class<T> typeClazz,
+                                                                   @Nullable T defaultValue) {
         Object value = deserializeJSON(json, defaultValue);
         if (!typeClazz.isInstance(value)) return defaultValue;
 
         return typeClazz.cast(value);
     }
 
-    protected static Map<String, Object> jsonToMap(String json) {
+    protected Map<String, Object> jsonToMap(String json) {
         return jsonToMap(parser.parse(json).getAsJsonObject());
     }
 
-    protected static Map<String, Object> jsonToMap(JsonObject object) {
+    protected Map<String, Object> jsonToMap(JsonObject object) {
         return parseMap(gson.fromJson(object, Map.class));
     }
 
-    protected static Map<String, Object> parseMap(Map<?, ?> map) {
+    protected Map<String, Object> parseMap(Map<?, ?> map) {
         Map<String, Object> args = new LinkedHashMap<>();
         map.forEach((k, v) -> {
             String key = (String) k;
