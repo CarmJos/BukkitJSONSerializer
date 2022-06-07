@@ -23,7 +23,7 @@ Then, we cloud use `serializeToJSON(ConfigurationSerializable)` to serialize a o
 
 ```jave
 Location location = new Location(Bukkit.getWorlds().get(0), -100.5, 100, 105.5);
-String serialized = BukkitJSONSerializer.serializeToJSON(location);
+String serialized = serializer.serializeToJSON(location);
 // -> {"world":"world","x":-100.5,"y":100,"z":105.5,"yaw":0.0,"pitch":0.0}
 ```
 
@@ -35,7 +35,7 @@ Location location = serializer.deserializeSON(json, Location.class);
 // Location{world=world, x=-100.5, y=100, z=105.5, pitch=0.0, yaw=0.0}
 ```
 
-Or use `BukkitJSONSerializer#deserializeSON(json,typeClass,defaultValue)` if we need a default value.
+Or use `deserializeSON(json,typeClass,defaultValue)` if we need a default value.
 
 ### JSONSerializable class
 
