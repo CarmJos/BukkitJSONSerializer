@@ -31,7 +31,7 @@ When we need to read the object, just use `deserializeJSON(json,typeClass)` to d
 string.
 
 ```java
-Location location = serializer.deserializeSON(json, Location.class);
+Location location = serializer.deserializeJSON(json, Location.class);
 // Location{world=world, x=-100.5, y=100, z=105.5, pitch=0.0, yaw=0.0}
 ```
 
