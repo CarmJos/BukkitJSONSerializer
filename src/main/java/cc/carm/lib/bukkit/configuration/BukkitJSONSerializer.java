@@ -1,15 +1,17 @@
 package cc.carm.lib.bukkit.configuration;
 
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.text.NumberFormat;
+import java.math.BigDecimal;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -30,36 +32,7 @@ public class BukkitJSONSerializer {
 
 
     public static @NotNull BukkitJSONSerializer create() {
-        return create(new GsonBuilder().enableComplexMapKeySerialization().serializeNulls().disableHtmlEscaping()
-                .registerTypeAdapter(Map.class, (JsonDeserializer<Map<?, ?>>) (json, typeOfT, context) -> {
-                    LinkedHashMap<String, Object> map = new LinkedHashMap<>();
-                    JsonObject obj = json.getAsJsonObject();
-                    for (Map.Entry<String, JsonElement> entry : obj.entrySet()) {
-                        String key = entry.getKey();
-                        JsonElement element = entry.getValue();
-                        if (element.isJsonArray()) {
-                            map.put(key, context.deserialize(element, List.class));
-                        } else if (element.isJsonPrimitive()) {
-                            Object value = element.getAsString();
-                            try {
-                                // try to fix number problems
-                                Number num = NumberFormat.getInstance().parse((String) value);
-                                if (num != null) {
-                                    if (num.toString().equals(value)) {
-                                        value = num.longValue() > Integer.MAX_VALUE ? num.longValue() : num.intValue();
-                                    } else {
-                                        value = num.doubleValue();
-                                    }
-                                }
-                            } catch (Exception ignored) {
-                            }
-                            map.put(key, value);
-                        } else if (element.isJsonObject()) {
-                            map.put(key, context.deserialize(element, Map.class));
-                        }
-                    }
-                    return map;
-                }).create());
+        return create(new GsonBuilder().enableComplexMapKeySerialization().serializeNulls().disableHtmlEscaping().create());
     }
 
     public static @NotNull BukkitJSONSerializer create(@NotNull Gson gson) {
@@ -196,9 +169,24 @@ public class BukkitJSONSerializer {
                 } else {
                     args.put(key, sub);
                 }
+            } else if (v instanceof Double) {
+                double d = (Double) v;
+                BigDecimal num = new BigDecimal(d);
+                long longValue = num.longValue();
+                String decimalPart = String.valueOf(num.subtract(new BigDecimal(longValue)));
+
+                if (decimalPart.matches("^0+$")) {
+                    if (longValue > Integer.MAX_VALUE || longValue < Integer.MIN_VALUE) {
+                        args.put(key, num.longValue());
+                    } else {
+                        args.put(key, num.intValue());
+                    }
+                }
+
             } else {
                 args.put(key, v);
             }
+            
         });
         return args;
     }
