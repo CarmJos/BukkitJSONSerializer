@@ -1,16 +1,15 @@
 package cc.carm.lib.bukkit.configuration;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.text.NumberFormat;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -29,8 +28,42 @@ public class BukkitJSONSerializer {
     public static final String TYPE_KEY = ConfigurationSerialization.SERIALIZED_TYPE_KEY;
     public static final BukkitJSONSerializer INSTANCE = BukkitJSONSerializer.create();
 
+
     public static @NotNull BukkitJSONSerializer create() {
-        return create(new GsonBuilder().disableHtmlEscaping().create(), new JsonParser());
+        return create(new GsonBuilder().enableComplexMapKeySerialization().serializeNulls().disableHtmlEscaping()
+                .registerTypeAdapter(Map.class, (JsonDeserializer<Map<?, ?>>) (json, typeOfT, context) -> {
+                    LinkedHashMap<String, Object> map = new LinkedHashMap<>();
+                    JsonObject obj = json.getAsJsonObject();
+                    for (Map.Entry<String, JsonElement> entry : obj.entrySet()) {
+                        String key = entry.getKey();
+                        JsonElement element = entry.getValue();
+                        if (element.isJsonArray()) {
+                            map.put(key, context.deserialize(element, List.class));
+                        } else if (element.isJsonPrimitive()) {
+                            Object value = element.getAsString();
+                            try {
+                                // try to fix number problems
+                                Number num = NumberFormat.getInstance().parse((String) value);
+                                if (num != null) {
+                                    if (num.toString().equals(value)) {
+                                        value = num.longValue() > Integer.MAX_VALUE ? num.longValue() : num.intValue();
+                                    } else {
+                                        value = num.doubleValue();
+                                    }
+                                }
+                            } catch (Exception ignored) {
+                            }
+                            map.put(key, value);
+                        } else if (element.isJsonObject()) {
+                            map.put(key, context.deserialize(element, Map.class));
+                        }
+                    }
+                    return map;
+                }).create());
+    }
+
+    public static @NotNull BukkitJSONSerializer create(@NotNull Gson gson) {
+        return new BukkitJSONSerializer(gson, new JsonParser());
     }
 
     public static @NotNull BukkitJSONSerializer create(@NotNull Gson gson, @NotNull JsonParser parser) {
@@ -169,6 +202,5 @@ public class BukkitJSONSerializer {
         });
         return args;
     }
-
 
 }

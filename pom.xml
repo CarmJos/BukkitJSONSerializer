@@ -13,7 +13,7 @@
     </properties>
     <groupId>cc.carm.lib</groupId>
     <artifactId>bukkitjsonserializer</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
 
     <name>BukkitJSONSerializer</name>
     <description>A JSON serialize/deserialize util for bukkit's ConfigurationSerialization.</description>
