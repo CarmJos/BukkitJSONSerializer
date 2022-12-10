@@ -19,7 +19,7 @@ First, we should get the serializer instance or create a new one.
 BukkitJSONSerializer serializer = BukkitJSONSerializer.get();
 ```
 
-Then, we cloud use `serializeToJSON(ConfigurationSerializable)` to serialize a object to JSON.
+Then, we could use `serializeToJSON(ConfigurationSerializable)` to serialize a object to JSON.
 
 ```jave
 Location location = new Location(Bukkit.getWorlds().get(0), -100.5, 100, 105.5);
